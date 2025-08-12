@@ -5,6 +5,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   XMarkIcon,
+  HeartIcon,
 } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import Image from "next/image";
@@ -14,7 +15,6 @@ import { variants } from "../utils/animationVariants";
 import downloadPhoto from "../utils/downloadPhoto";
 import { range } from "../utils/range";
 import type { ImageProps, SharedModalProps } from "../utils/types";
-import Twitter from "./Icons/Twitter";
 
 export default function SharedModal({
   index,
@@ -26,6 +26,7 @@ export default function SharedModal({
   direction,
 }: SharedModalProps) {
   const [loaded, setLoaded] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   let filteredImages = images?.filter((img: ImageProps) =>
     range(index - 15, index + 15).includes(img.id),
@@ -80,8 +81,9 @@ export default function SharedModal({
                   width={navigation ? 1280 : 1920}
                   height={navigation ? 853 : 1280}
                   priority
-                  alt="Next.js Conf image"
+                  alt="Analog photography portfolio"
                   onLoad={() => setLoaded(true)}
+                  className="rounded-lg"
                 />
               </motion.div>
             </AnimatePresence>
@@ -115,33 +117,34 @@ export default function SharedModal({
                   )}
                 </>
               )}
-              <div className="absolute top-0 right-0 flex items-center gap-2 p-3 text-white">
-                {navigation ? (
-                  <a
-                    href={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentImage.public_id}.${currentImage.format}`}
-                    className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
-                    target="_blank"
-                    title="Open fullsize version"
-                    rel="noreferrer"
-                  >
-                    <ArrowTopRightOnSquareIcon className="h-5 w-5" />
-                  </a>
-                ) : (
-                  <a
-                    href={`https://twitter.com/intent/tweet?text=Check%20out%20this%20pic%20from%20Next.js%20Conf!%0A%0Ahttps://nextjsconf-pics.vercel.app/p/${index}`}
-                    className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
-                    target="_blank"
-                    title="Open fullsize version"
-                    rel="noreferrer"
-                  >
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                )}
+              
+              {/* Top right buttons */}
+              <div className="absolute top-4 right-4 flex items-center gap-2 text-white">
+                <button
+                  onClick={() => setIsLiked(!isLiked)}
+                  className={`rounded-full p-2 backdrop-blur-lg transition ${
+                    isLiked 
+                      ? "bg-red-500/80 text-white" 
+                      : "bg-black/50 text-white/75 hover:bg-black/75 hover:text-white"
+                  }`}
+                  title={isLiked ? "Remove from favorites" : "Add to favorites"}
+                >
+                  <HeartIcon className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`} />
+                </button>
+                <a
+                  href={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentImage.public_id}.${currentImage.format}`}
+                  className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
+                  target="_blank"
+                  title="Open fullsize version"
+                  rel="noreferrer"
+                >
+                  <ArrowTopRightOnSquareIcon className="h-5 w-5" />
+                </a>
                 <button
                   onClick={() =>
                     downloadPhoto(
                       `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentImage.public_id}.${currentImage.format}`,
-                      `${index}.jpg`,
+                      `stephen-adei-photography-${index}.jpg`,
                     )
                   }
                   className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
@@ -150,7 +153,9 @@ export default function SharedModal({
                   <ArrowDownTrayIcon className="h-5 w-5" />
                 </button>
               </div>
-              <div className="absolute top-0 left-0 flex items-center gap-2 p-3 text-white">
+              
+              {/* Top left close button */}
+              <div className="absolute top-4 left-4 text-white">
                 <button
                   onClick={() => closeModal()}
                   className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
@@ -164,6 +169,7 @@ export default function SharedModal({
               </div>
             </div>
           )}
+          
           {/* Bottom Nav bar */}
           {navigation && (
             <div className="fixed inset-x-0 bottom-0 z-40 overflow-hidden bg-gradient-to-b from-black/0 to-black/60">
