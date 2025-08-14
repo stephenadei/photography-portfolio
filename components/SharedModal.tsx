@@ -90,7 +90,7 @@ export default function SharedModal({
           </div>
         </div>
 
-        {/* Buttons + bottom nav bar */}
+        {/* Buttons + metadata + bottom nav bar */}
         <div className="absolute inset-0 mx-auto flex max-w-7xl items-center justify-center">
           {/* Buttons */}
           {loaded && (
@@ -166,6 +166,22 @@ export default function SharedModal({
                     <ArrowUturnLeftIcon className="h-5 w-5" />
                   )}
                 </button>
+              </div>
+
+              {/* Bottom-left metadata panel */}
+              <div className="absolute left-3 bottom-20 sm:bottom-24 max-w-xs sm:max-w-sm text-white/90">
+                {currentImage?.tags && currentImage.tags.length > 0 && (
+                  <div className="rounded-md bg-black/40 backdrop-blur-md border border-white/10 p-3 text-xs leading-relaxed">
+                    <div className="mb-1 font-semibold text-white">Technische info</div>
+                    <div className="flex flex-wrap gap-2">
+                      {currentImage.tags.slice(0, 8).map((t) => (
+                        <span key={t} className="rounded bg-white/10 px-2 py-0.5">
+                          {t.replace(/^camera:|^film:|^theme:/, "")}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
