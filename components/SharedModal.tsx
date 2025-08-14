@@ -170,18 +170,40 @@ export default function SharedModal({
 
               {/* Bottom-left metadata panel */}
               <div className="absolute left-3 bottom-20 sm:bottom-24 max-w-xs sm:max-w-sm text-white/90">
-                {currentImage?.tags && currentImage.tags.length > 0 && (
-                  <div className="rounded-md bg-black/40 backdrop-blur-md border border-white/10 p-3 text-xs leading-relaxed">
-                    <div className="mb-1 font-semibold text-white">Technische info</div>
-                    <div className="flex flex-wrap gap-2">
-                      {currentImage.tags.slice(0, 8).map((t) => (
-                        <span key={t} className="rounded bg-white/10 px-2 py-0.5">
-                          {t.replace(/^camera:|^film:|^theme:/, "")}
-                        </span>
-                      ))}
-                    </div>
+                {(currentImage?.tags?.length || 0) > 0 || currentImage?.context ? (
+                  <div className="rounded-md bg-black/40 backdrop-blur-md border border-white/10 p-3 text-xs leading-relaxed space-y-2">
+                    <div className="font-semibold text-white">Technische info</div>
+                    {(() => {
+                      const rawCtx: any = currentImage?.context || {};
+                      const ctx = rawCtx?.custom || rawCtx || {};
+                      const caption = ctx.caption || ctx.title || "";
+                      const camera = ctx.camera || "";
+                      const film = ctx.film || "";
+                      const settings = ctx.settings || "";
+                      return (
+                        <div className="space-y-1">
+                          {caption && <div className="text-white/90">{caption}</div>}
+                          {(camera || film || settings) && (
+                            <div className="text-white/70">
+                              {camera && <span>Camera: {camera}</span>}{camera && (film || settings) ? " · " : ""}
+                              {film && <span>Film: {film}</span>}{film && settings ? " · " : ""}
+                              {settings && <span>{settings}</span>}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                    {(currentImage?.tags?.length || 0) > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {currentImage!.tags!.slice(0, 8).map((t) => (
+                          <span key={t} className="rounded bg-white/10 px-2 py-0.5">
+                            {t.replace(/^camera:|^film:|^theme:/, "")}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           )}
